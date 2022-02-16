@@ -2,18 +2,20 @@ from collections import namedtuple, defaultdict
 # input data
 log_filename = "hz_all_nodes.log"
 top_size = 10
+field_list = ["datetime", "address", "type", "source", "thread", "data"]
 
 
-def read_log(filename):
+def read_log(filename, fields):
     '''
     Reads log from given file into manageable format
     :param filename: path to log file
+    :param fields: list of fields of log entry
     :return: list of log entries
     '''
-    Entry = namedtuple('LogEntry', 'datetime address type source thread data')
+    Entry = namedtuple("LogEntry", " ".join(fields))
     with open(filename, "r") as file:
         lines = file.readlines()
-    list_log = [l.strip().split("\t", 5) for l in lines]
+    list_log = [l.strip().split("\t", len(fields) - 1) for l in lines]
     return [Entry(*line) for line in list_log]
 
 
@@ -43,8 +45,7 @@ def print_top(threads_top, count):
 
 
 if __name__ == '__main__':
-    log = read_log(log_filename)
-    print(log[0])
+    log = read_log(log_filename, field_list)
     grouped_by_thread = group_by(log, "thread")
     thread_count = [(item[0], len(item[1])) for item in grouped_by_thread.items()]
     # lambda: sort in descending order
