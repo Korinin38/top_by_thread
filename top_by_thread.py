@@ -5,6 +5,11 @@ top_size = 10
 
 
 def read_log(filename):
+    '''
+    Reads log from given file into manageable format
+    :param filename: path to log file
+    :return: list of log entries
+    '''
     Entry = namedtuple('LogEntry', 'datetime address type source thread data')
     with open(filename, "r") as file:
         lines = file.readlines()
@@ -13,6 +18,13 @@ def read_log(filename):
 
 
 def group_by(log_entries, field):
+    '''
+    Transforms Sequence of log entries into dict with keys of 'field' values
+    and value of list of entries that correspond to that 'field' value
+    :param log_entries: Sequence of log entries
+    :param field: attribute name of log entries to group by
+    :return: dict {field_data: [list_of_entries_with_given_data_in_field]}
+    '''
     thread_group = defaultdict(list)
     for entry in log_entries:
         thread_group[getattr(entry, field)].append(entry)
@@ -20,14 +32,21 @@ def group_by(log_entries, field):
 
 
 def print_top(threads_top, count):
+    '''
+    Prints top-'count' in readable format
+    :param threads_top: sorted list of pairs (key, sorted_value)
+    :param count: how many of entries to include in top
+    :return: None
+    '''
     for line in threads_top[:count]:
         print(*line)
 
 
 if __name__ == '__main__':
     log = read_log(log_filename)
+    print(log[0])
     grouped_by_thread = group_by(log, "thread")
-    thread_count = [(pair[0], len(pair[1])) for pair in grouped_by_thread.items()]
-    # sort in descending order
+    thread_count = [(item[0], len(item[1])) for item in grouped_by_thread.items()]
+    # lambda: sort in descending order
     thread_top = sorted(thread_count, key=lambda x: -x[1])
     print_top(thread_top, top_size)
