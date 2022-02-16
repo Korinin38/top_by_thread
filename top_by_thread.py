@@ -12,10 +12,10 @@ def read_log(filename):
     return [Entry(*line) for line in list_log]
 
 
-def group_by_thread(log_entries):
+def group_by(log_entries, field):
     thread_group = defaultdict(list)
     for entry in log_entries:
-        thread_group[entry.thread].append(entry)
+        thread_group[getattr(entry, field)].append(entry)
     return thread_group
 
 
@@ -26,7 +26,7 @@ def print_top(threads_top, count):
 
 if __name__ == '__main__':
     log = read_log(log_filename)
-    grouped_by_thread = group_by_thread(log)
+    grouped_by_thread = group_by(log, "thread")
     thread_count = [(pair[0], len(pair[1])) for pair in grouped_by_thread.items()]
     # sort in descending order
     thread_top = sorted(thread_count, key=lambda x: -x[1])
