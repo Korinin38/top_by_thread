@@ -40,7 +40,7 @@ def print_top(threads_top, count):
         print(*line)
 
 
-def top_by_thread(file, top_size, field_list, top_field):
+def top_by(file, top_size, field_list, top_field):
     """
     Reads log with fields 'field_list' from 'file', groups them by 'top_field',
     constructs top-'top_size' of most common entries with that field and prints it.
@@ -62,5 +62,5 @@ if __name__ == '__main__':
     log_filename = "hz_all_nodes.log"
     size = 10
     fields = ["datetime", "address", "type", "source", "thread", "data"]
-    top_by = "thread"
-    top_by_thread(log_filename, size, fields, top_by)
+    field_to_top_by = "thread"
+    top_by(log_filename, size, fields, top_by)
